@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
+#pragma warning disable
+
 namespace api.Database.Models
 {
     public class Usuario
@@ -19,6 +21,7 @@ namespace api.Database.Models
         [Required]
         public string ChaveDeAcesso { get; set; } = string.Empty;
 
+       
         public Usuario()
         {
 
@@ -35,7 +38,8 @@ namespace api.Database.Models
                 Nome = this.Nome,
                 Email = this.Email, 
                 NivelDeAcesso = this.NivelDeAcesso
-                });          
+                });    
+               
         }
 
     

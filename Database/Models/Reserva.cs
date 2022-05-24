@@ -20,6 +20,27 @@ namespace api.Database.Models
         public DateTime InicioReserva { get; set; }
         [Required]
         public DateTime FimReserva { get; set; }
+
+        public Reserva (){ }
         
+        public Reserva (DtoReserva novaReserva)
+        {
+            this.TituloReserva = novaReserva.TituloReserva;
+            this.SenhaReserva = novaReserva.SenhaReserva;
+            this.InicioReserva = novaReserva.InicioReserva;
+            this.FimReserva = novaReserva.FimReserva;
+
+            
+        }
+
+        public Reserva (DtoReserva novaReserva, Usuario userSession)
+        {
+            this.TituloReserva = novaReserva.TituloReserva;
+            this.SenhaReserva = novaReserva.SenhaReserva;
+            this.InicioReserva = novaReserva.InicioReserva;
+            this.FimReserva = novaReserva.FimReserva;
+
+            this.Usuario = userSession;
+        }
     }
 }
