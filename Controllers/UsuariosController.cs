@@ -35,14 +35,7 @@ namespace api.Controllers
                                 {
                                         Id = usuario.Id,
                                         Nome = usuario.Nome,
-                                        NivelDeAcesso = usuario.NivelDeAcesso,
-                                        Reservas = (from reserva in context.Reservas 
-                                                where reserva.Usuario.Id == usuario.Id
-                                                select new {
-                                                    TituloReserva = reserva.TituloReserva,
-                                                    InicioReserva = reserva.InicioReserva,
-                                                    FimReserva = reserva.FimReserva,
-                                                }).ToList()
+                                        NivelDeAcesso = usuario.NivelDeAcesso,                                      
 
                                 };
                 return Ok(response);
@@ -68,14 +61,7 @@ namespace api.Controllers
                                     {
                                         Id = usuario.Id,
                                         Nome = usuario.Nome,
-                                        NivelDeAcesso = usuario.NivelDeAcesso,
-                                        Reservas = (from reserva in context.Reservas 
-                                                    where reserva.Usuario.Id == usuario.Id
-                                                    select new {
-                                                        TituloReserva = reserva.TituloReserva,
-                                                        InicioReserva = reserva.InicioReserva,
-                                                        FimReserva = reserva.FimReserva,
-                                                    }).ToList()
+                                        NivelDeAcesso = usuario.NivelDeAcesso
 
                                 }).FirstOrDefault();
 
