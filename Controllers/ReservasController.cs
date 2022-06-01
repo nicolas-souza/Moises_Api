@@ -21,15 +21,15 @@ namespace api.Controllers
             context = _context;
         }
 
-        [HttpGet("apiKey")]
-        public IActionResult GetAllReservas (string apiKey)
+        [HttpGet()]
+        public IActionResult GetAllReservas ()
         {
             try 
             {
-                Usuario userSession = context.Usuarios.SingleOrDefault(usuario => usuario.ChaveDeAcesso == apiKey);
+                //Usuario userSession = context.Usuarios.SingleOrDefault(usuario => usuario.ChaveDeAcesso == apiKey);
 
-                    if (userSession == null)
-                        return BadRequest();
+                    // if (userSession == null)
+                    //     return BadRequest();
 
                 var reservas = from reserva in context.Reservas
                                from usuario in context.Usuarios
@@ -38,8 +38,8 @@ namespace api.Controllers
                                 {
                                    Id = reserva.Id,
                                    TituloReserva = reserva.TituloReserva,
-                                   InicioReserva = reserva.InicioReserva,
-                                   FimReserva = reserva.FimReserva,
+                                   InicioReserva = reserva.InicioReserva.ToString("yyyy-MM-dd HH:mm"),
+                                   FimReserva = reserva.FimReserva.ToString("yyyy-MM-dd HH:mm"),
                                    Usuario = new 
                                                 {
                                                     Nome = usuario.Nome,
