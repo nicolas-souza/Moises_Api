@@ -6,7 +6,6 @@ using api.Database.Context;
 using api.Database.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-#pragma warning disable
 
 namespace api.Controllers
 {
@@ -20,12 +19,12 @@ namespace api.Controllers
             context = _context;
         }
 
-        [HttpGet("apiKey")]
+        [HttpGet("apiKey={apiKey}")]
         public IActionResult getAllUsuarios(string apiKey)
         {
             try 
             {
-                Usuario userSession = context.Usuarios.SingleOrDefault(usuario => usuario.ChaveDeAcesso == apiKey);
+                Usuario? userSession = context.Usuarios.SingleOrDefault(usuario => usuario.ChaveDeAcesso == apiKey);
 
                 if (userSession == null)
                     return BadRequest();
@@ -35,6 +34,7 @@ namespace api.Controllers
                                 {
                                         Id = usuario.Id,
                                         Nome = usuario.Nome,
+                                        Email = usuario.Email,
                                         NivelDeAcesso = usuario.NivelDeAcesso,                                      
 
                                 };
@@ -46,7 +46,7 @@ namespace api.Controllers
             }
         }
 
-        [HttpGet("apiKey/id")]
+        [HttpGet("apiKey={apiKey}/id={id}")]
         public IActionResult GetUsuarioById( int id, string apiKey)
         {
             try
@@ -76,45 +76,50 @@ namespace api.Controllers
             }
         }
 
-        
+
         [HttpPost("apiKey")]
-        public IActionResult postNewUsuario(object json, string apiKey)
+        public IActionResult PostNewUsuario(string apiKey, object json)
         {
             try
             {
                 Usuario userSession = context.Usuarios.SingleOrDefault(usuario => usuario.ChaveDeAcesso == apiKey);
 
-                if (userSession == null || json == null)
-                    return BadRequest();
 
                 DtoUsuario _novoUsuario = JsonConvert.DeserializeObject<DtoUsuario>(json.ToString());
+
+                if (userSession == null || json == null)
+                    return BadRequest();
                 
-                Usuario novoUsuario = new Usuario(_novoUsuario); 
+                Usuario novoUsuario = new Usuario(_novoUsuario);
 
                 context.Usuarios.Add(novoUsuario);
                 context.SaveChanges();
 
                 var usuarioAdicionado = context.Usuarios.
-                                            Where(user => user.ChaveDeAcesso == novoUsuario.ChaveDeAcesso).Select(user => new {
+                                            Where(user => user.ChaveDeAcesso == novoUsuario.ChaveDeAcesso).Select(user => new
+                                            {
 
                                                 Id = user.Id,
                                                 Nome = user.Nome,
                                                 Email = user.Email,
-                                                NivelDeAcesso = user.NivelDeAcesso,                    
+                                                NivelDeAcesso = user.NivelDeAcesso,
 
                                             });
 
-                
+
                 return Ok(usuarioAdicionado);
 
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500);
             }
         }
 
-        [HttpDelete("apiKey/id")]
-        public IActionResult DeleteUsuario(int id, string apiKey)
+        
+
+        [HttpDelete("apiKey={apiKey}/id={id}")]
+        public IActionResult DeleteUsuario(string apiKey, int id)
         {
             try 
             {
@@ -139,12 +144,12 @@ namespace api.Controllers
                                                     }).ToList()               
                 };
 
-                context.Reservas.RemoveRange(
+                context?.Reservas?.RemoveRange(
                     context.Reservas.Where(
                         reserva => reserva.Usuario.Id == usuarioDeletado.Id));
 
-                context.Usuarios.Remove(usuarioDeletado);
-                context.SaveChanges();
+                context?.Usuarios.Remove(usuarioDeletado);
+                context?.SaveChanges();
 
                 return Ok(response);
 
