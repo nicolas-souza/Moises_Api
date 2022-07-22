@@ -24,36 +24,40 @@ namespace api.Controllers
         [HttpGet()]
         public IActionResult GetAllReservas ()
         {
-            try 
+            try
             {
+                Console.WriteLine("funcionou");
                 var reservas = from reserva in context.Reservas
                                from usuario in context.Usuarios
-                                where reserva.Usuario.Id == usuario.Id
-                                select new 
-                                {
+                               where reserva.Usuario.Id == usuario.Id
+                               select new
+                               {
                                    Id = reserva.Id,
                                    TituloReserva = reserva.TituloReserva,
                                    InicioReserva = reserva.InicioReserva.ToString("yyyy-MM-dd HH:mm"),
                                    FimReserva = reserva.FimReserva.ToString("yyyy-MM-dd HH:mm"),
-                                   Usuario = new 
-                                                {
-                                                    Nome = usuario.Nome,
-                                                    Email = usuario.Email,
-                                                    NivelDeAcesso = usuario.NivelDeAcesso
-                                                }
-                                };
+                                   Usuario = new
+                                   {
+                                       Nome = usuario.Nome,
+                                       Email = usuario.Email,
+                                       NivelDeAcesso = usuario.NivelDeAcesso
+                                   }
+                               };
 
                 return Ok(reservas);
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-
+                Log.RegistroErro("nicolas", ex);
                 return StatusCode(500);
 
             }
+
+           // return Ok();
         }
 
-        [HttpGet("apiKey={apiKey}/id={id}")]
+        [HttpGet("{apiKey}/{id}")]
         public IActionResult GetById(string apiKey, int id)
         {
             try 
@@ -87,13 +91,13 @@ namespace api.Controllers
 
             } catch (Exception ex)
             {
-
+                
                 return StatusCode(500);
 
             }
         }
 
-        [HttpGet("reservasUsuario/apiKey={apiKey}")]
+        [HttpGet("reservasUsuario/{apiKey}")]
         public IActionResult GetByUser(string apiKey)
         {
             try 
@@ -129,7 +133,7 @@ namespace api.Controllers
 
         }
 
-        [HttpPost("apiKey")]
+        [HttpPost("{apiKey}")]
         public IActionResult PostReserva (string apiKey, object json)
         {
             bool reservaInvalida = false;
@@ -177,7 +181,7 @@ namespace api.Controllers
             }
         }
 
-        [HttpDelete("apiKey={apiKey}/id={id}")]
+        [HttpDelete("{apiKey}/{id}")]
         public IActionResult DeleteById (string apiKey, int id)
         {
             try 
@@ -204,6 +208,37 @@ namespace api.Controllers
 
                 return StatusCode(500);
             }
+        }
+        
+        [HttpGet("fechadura/{apiKey}")]
+        public IActionResult GetReservaMoment(string apiKey)
+        {
+            try
+            {
+                Usuario userSession = context.Usuarios.SingleOrDefault(usuario => usuario.ChaveDeAcesso == apiKey);
+
+                if (userSession == null)
+                    return StatusCode(400);
+                
+                Reserva? reserva = context.Reservas.SingleOrDefault(res => res.InicioReserva <= DateTime.Now && DateTime.Now < res.FimReserva);
+
+                if (reserva == null)
+                    return Ok();
+
+                var response = new {
+                                    TituloReserva = reserva.TituloReserva,
+                                    SenhaReserva = reserva.SenhaReserva,                      
+                                    InicioReserva =  reserva.InicioReserva,
+                                    FimReserva = reserva.FimReserva
+                                   };
+
+                return Ok(response);
+
+            } catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+           
         }
     }
 }

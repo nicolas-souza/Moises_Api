@@ -19,7 +19,7 @@ namespace api.Controllers
             context = _context;
         }
 
-        [HttpGet("apiKey={apiKey}")]
+        [HttpGet("{apiKey}")]
         public IActionResult getAllUsuarios(string apiKey)
         {
             try 
@@ -46,7 +46,7 @@ namespace api.Controllers
             }
         }
 
-        [HttpGet("apiKey={apiKey}/id={id}")]
+        [HttpGet("{apiKey}/{id}")]
         public IActionResult GetUsuarioById( int id, string apiKey)
         {
             try
@@ -76,8 +76,7 @@ namespace api.Controllers
             }
         }
 
-
-        [HttpPost("apiKey")]
+        [HttpPost("{apiKey}")]
         public IActionResult PostNewUsuario(string apiKey, object json)
         {
             try
@@ -116,9 +115,7 @@ namespace api.Controllers
             }
         }
 
-        
-
-        [HttpDelete("apiKey={apiKey}/id={id}")]
+        [HttpDelete("{apiKey}/{id}")]
         public IActionResult DeleteUsuario(string apiKey, int id)
         {
             try 
