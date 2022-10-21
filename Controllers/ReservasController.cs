@@ -213,6 +213,14 @@ namespace api.Controllers
         [HttpGet("fechadura/{apiKey}")]
         public IActionResult GetReservaMoment(string apiKey)
         {
+            var response = new
+            {
+                TituloReserva = "Disponível",
+                SenhaReserva = "123456",
+                InicioReserva = DateTime.Now.AddDays(-1),
+                FimReserva = DateTime.Now
+            };
+
             try
             {
                 Usuario userSession = context.Usuarios.SingleOrDefault(usuario => usuario.ChaveDeAcesso == apiKey);
@@ -222,15 +230,16 @@ namespace api.Controllers
                 
                 Reserva? reserva = context.Reservas.SingleOrDefault(res => res.InicioReserva <= DateTime.Now && DateTime.Now < res.FimReserva);
 
-                if (reserva == null)
-                    return Ok();
-
-                var response = new {
-                                    TituloReserva = reserva.TituloReserva,
-                                    SenhaReserva = reserva.SenhaReserva,                      
-                                    InicioReserva =  reserva.InicioReserva,
-                                    FimReserva = reserva.FimReserva
-                                   };
+                if (reserva != null)
+                {
+                    response = new
+                    {
+                        TituloReserva = reserva.TituloReserva,
+                        SenhaReserva = reserva.SenhaReserva,
+                        InicioReserva = reserva.InicioReserva,
+                        FimReserva = reserva.FimReserva
+                    };
+                }                              
 
                 return Ok(response);
 
